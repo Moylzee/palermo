@@ -33,13 +33,15 @@ class RoleSelectionPhase extends BasePhase {
             this.rolePool.push('Civilian');
         }
 
-        console.log("1")
+        console.log("1");
 
         // Shuffle roles
         for (let i = this.rolePool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [this.rolePool[i], this.rolePool[j]] = [this.rolePool[j], this.rolePool[i]]
         }
+
+        console.log("2");
 
         // create a button to assign the name and the role of the next player
         for (let i = 0; i <= this.numberOfPlayers;) {
