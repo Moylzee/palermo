@@ -98,4 +98,75 @@ function showPlayerBox(parent, playerNameList) {
     return playerBox;
 }
 
+function getActivePlayers() {
+    const playerNameList = [];
+    for (let i = 0; i < gameSettings.playerList.length; i++) {
+        if (gameSettings.playerList[i].alive || !gameSettings.playerList[i].votedOut) {
+            playerNameList.push(gameSettings.playerList[i].name);
+        }
+    }
+    return playerNameList;
+}
+
+function getPlayerRoles() {
+    const playerRoles = [];
+    for (let i = 0; i < gameSettings.playerList.length; i++) {
+        if (gameSettings.playerList[i].alive || !gameSettings.playerList[i].votedOut) {
+            playerRoles.push(gameSettings.playerList[i].role);
+        }
+    }
+    return playerRoles;
+}
+
+function isGameOver() {
+    // MADNESS
+    const votedOutMadness = gameSettings.playerList.some(
+        player => player.votedOut && player.role === "Madness"
+    );
+
+    if (votedOutMadness) {
+        return true;
+    }
+
+    var activePlayers = getActivePlayers();
+    var activePlayersRoles = getPlayerRoles();
+
+    var goodPlayers = 0;
+    var badPlayers = 0;
+    var numMurderers = 0;
+
+    for (let i = 0; i < activePlayersRoles.length; i++) {
+        switch (activePlayersRoles[i]) {
+            case 'Murderer 1':
+                badPlayers++;
+                numMurderers++;
+                break;
+            case 'Murderer 2':
+                badPlayers++;
+                numMurderers++;
+                break;
+            case 'Snitch':
+                badPlayers++;
+            default:
+                goodPlayers++;
+                break;
+        }
+    }
+
+    // If Both Murderers are dead
+    if (numMurderers == 0) {
+        return true;
+    }
+
+    // If number of players == 4 and active bad == 2
+    if (activePlayers.length == 4 && badPlayers ==  2) {
+        return true;
+    }
+
+    // If number of players == 5 and active bad == 3
+    if (activePlayers.length == 5 && badPlayers == 3) {
+        return true;
+    }
+}
+
 export { createPlayerIconsContainer, showPlayerIcons, showPlayerBox };
