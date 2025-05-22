@@ -48,6 +48,11 @@ function showPlayerIcons(iconContainer, count, roles) {
 
 
  // Helper to get icon and color for a role
+ /**
+  * 
+  * @param {string} role 
+  * @returns {icon: string, color: string}
+  */
 function getRoleIconAndColor(role) {
     switch (role) {
         case 'Murderer 1':
@@ -100,13 +105,13 @@ function showPlayerBox(parent, playerNameList) {
 }
 
 function getActivePlayers() {
-    const playerNameList = [];
+    const activePlayers = [];
     for (let i = 0; i < playerList.length; i++) {
         if (playerList[i].alive || !playerList[i].votedOut) {
-            playerNameList.push(playerList[i].name);
+            activePlayers.push(playerList[i]);
         }
     }
-    return playerNameList;
+    return activePlayers;
 }
 
 function getPlayerRoles() {
@@ -170,4 +175,10 @@ function isGameOver() {
     }
 }
 
-export { createPlayerIconsContainer, showPlayerIcons, showPlayerBox, isGameOver };
+
+function getPlayerByName(value) {
+    return playerList.filter((p) => p.name == value)[0];
+}
+
+
+export { createPlayerIconsContainer, showPlayerIcons, showPlayerBox, isGameOver, getActivePlayers };

@@ -1,4 +1,5 @@
 import { isGameOver } from "../common";
+import { KillPhase } from "./kill";
 
 class VotePhase {
     constructor(numberOfPlayers) {
@@ -95,7 +96,7 @@ class VotePhase {
             proceedButton.textContent = "Proceed";
             proceedButton.style = "margin-top: 2rem; font-size: 1.2rem;";
             proceedButton.addEventListener('click', () => {
-                container.remove();
+                this.container.remove();
                 this.nextPhase();
             });
             this.container.innerHTML = '';
@@ -141,6 +142,9 @@ class VotePhase {
 
     nextPhase() {
         // TODO: Move to kill phase
+
+        const killPhase = new KillPhase();
+        killPhase.render();
     }
 }
 

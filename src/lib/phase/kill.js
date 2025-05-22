@@ -1,29 +1,21 @@
+import { getActivePlayers } from "../common";
+
 class KillPhase {
-    constructor(activePlayers, murdererIds, onKill, onProceed) {
-        this.activePlayers = activePlayers;
-        this.murdererIds = murdererIds;     
-        this.onKill = onKill;               
-        this.onProceed = onProceed;         
-        this.selected = null;
-        this.container = null;
+    constructor() {
+        this.activePlayers = getActivePlayers();
     }
 
-    isMurderer(id) {
-        return this.murdererIds.includes(id);
-    }
+    handleSelect(playerName) {
+        if (this.selected) return;
 
-    handleSelect(playerId) {
-        if (this.selected || this.isMurderer(playerId)) return;
-
-        this.selected = playerId;
-        const player = this.activePlayers.find(p => p.id === playerId);
+        const player = this.activePlayers.find(p => p.name === playerName);
         const isBulletproof = player.role === 'bulletproof';
 
         // Update buttons
         const buttons = this.container.querySelectorAll('button');
         buttons.forEach(btn => {
             btn.disabled = true;
-            if (btn.dataset.id === playerId) {
+            if (btn.textContent === playerName) {
                 btn.style.background = isBulletproof ? 'orange' : 'red';
             }
         });
@@ -39,22 +31,20 @@ class KillPhase {
             result.style.color = 'red';
             result.textContent = `${player.name} has been killed.`;
 
-            if (this.onKill) {
-                this.onKill(playerId);
-            }
+            player.die();
         }
 
         this.container.appendChild(result);
 
-        // Proceed button
-        const proceedBtn = document.createElement('button');
-        proceedBtn.textContent = 'Proceed';
-        proceedBtn.style.marginTop = '1em';
-        proceedBtn.addEventListener('click', () => {
-            if (this.onProceed) this.onProceed();
+        const proceedButton = document.createElement('button');
+        proceedButton.textContent = "Proceed";
+        proceedButton.style = "margin-top: 2rem; font-size: 1.2rem;";
+        proceedButton.addEventListener('click', () => {
+            container.remove();
+            this.nextPhase();
         });
 
-        this.container.appendChild(proceedBtn);
+        this.container.appendChild(proceedButton);
     }
 
     showKillScreen() {
@@ -76,13 +66,10 @@ class KillPhase {
         this.activePlayers.forEach(player => {
             const btn = document.createElement('button');
             btn.textContent = player.name;
-            btn.dataset.id = player.id;
             btn.style.padding = '1em';
             btn.style.background = '#eee';
-            btn.style.cursor = this.isMurderer(player.id) ? 'not-allowed' : 'pointer';
-            btn.style.opacity = this.isMurderer(player.id) ? 0.5 : 1;
 
-            btn.addEventListener('click', () => this.handleSelect(player.id));
+            btn.addEventListener('click', () => this.handleSelect(player.name));
             grid.appendChild(btn);
         });
 
@@ -111,3 +98,6 @@ class KillPhase {
         document.body.appendChild(this.container);
     }
 }
+
+
+export { KillPhase };

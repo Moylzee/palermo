@@ -7,7 +7,7 @@ class TimerPhase extends BasePhase {
         super('Timer', 'Discussion time countdown before proceeding.');
         this.timerContainer = null;
         this.timerInterval = null;
-        this.timeLeft = 1 * 5; // Default 5 minutes
+        this.timeLeft = 1 * 1; // Default 5 minutes
     }
 
     showTimer() {
