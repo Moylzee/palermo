@@ -1,6 +1,3 @@
-import { db} from "./lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
-
 const optionalRoles = ['Cop', 'Madness', 'BulletProof', 'Snitch'];
 const roleRules = {
     7: ['Cop'],
@@ -14,7 +11,9 @@ let rolePool = [];
 let playerAssignments = [];
 
 document.getElementById('submitPlayers').addEventListener('click', () => {
+    console.log('User clicked continue');
     totalPlayers = parseInt(document.getElementById('numPlayers').value, 10);
+    console.log('Total players:', totalPlayers);
     const availableRoles = roleRules[totalPlayers] || [];
 
     const roleList = document.getElementById('roles');
@@ -74,8 +73,11 @@ function showNextPlayerInput() {
     container.innerHTML = `
         <h3>Player ${currentPlayerIndex + 1}, enter your name:</h3>
         <input type="text" id="playerNameInput" placeholder="Player Name" />
-        <button onclick="assignRoleToCurrentPlayer()">See Role</button>
     `;
+    const button = document.createElement('button');
+    button.textContent = 'See Role';
+    button.addEventListener('click', assignRoleToCurrentPlayer);
+    container.appendChild(button);
 }
 
 function assignRoleToCurrentPlayer() {
@@ -89,8 +91,11 @@ function assignRoleToCurrentPlayer() {
     container.innerHTML = `
         <h3>${playerName}, your role is:</h3>
         <p><strong>${assignedRole}</strong></p>
-        <button onclick="nextPlayer()">OK</button>
     `;
+    const button = document.createElement('button');
+    button.textContent = 'OK';
+    button.addEventListener('click', nextPlayer);
+    container.appendChild(button);
 }
 
 function nextPlayer() {
