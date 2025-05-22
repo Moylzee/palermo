@@ -1,4 +1,5 @@
 import gameSettings from "./gamesettings";
+import { playerList } from "./entity";
 
 
 /**
@@ -100,9 +101,9 @@ function showPlayerBox(parent, playerNameList) {
 
 function getActivePlayers() {
     const playerNameList = [];
-    for (let i = 0; i < gameSettings.playerList.length; i++) {
-        if (gameSettings.playerList[i].alive || !gameSettings.playerList[i].votedOut) {
-            playerNameList.push(gameSettings.playerList[i].name);
+    for (let i = 0; i < playerList.length; i++) {
+        if (playerList[i].alive || !playerList[i].votedOut) {
+            playerNameList.push(playerList[i].name);
         }
     }
     return playerNameList;
@@ -110,9 +111,9 @@ function getActivePlayers() {
 
 function getPlayerRoles() {
     const playerRoles = [];
-    for (let i = 0; i < gameSettings.playerList.length; i++) {
-        if (gameSettings.playerList[i].alive || !gameSettings.playerList[i].votedOut) {
-            playerRoles.push(gameSettings.playerList[i].role);
+    for (let i = 0; i < playerList.length; i++) {
+        if (playerList[i].alive || !playerList[i].votedOut) {
+            playerRoles.push(playerList[i].role);
         }
     }
     return playerRoles;
@@ -120,7 +121,7 @@ function getPlayerRoles() {
 
 function isGameOver() {
     // MADNESS
-    const votedOutMadness = gameSettings.playerList.some(
+    const votedOutMadness = playerList.some(
         player => player.votedOut && player.role === "Madness"
     );
 
@@ -169,4 +170,4 @@ function isGameOver() {
     }
 }
 
-export { createPlayerIconsContainer, showPlayerIcons, showPlayerBox };
+export { createPlayerIconsContainer, showPlayerIcons, showPlayerBox, isGameOver };

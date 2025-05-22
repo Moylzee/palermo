@@ -1,3 +1,5 @@
+import { isGameOver } from "../common";
+
 class VotePhase {
     constructor(numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
@@ -86,13 +88,23 @@ class VotePhase {
 
         alert(message);
 
-        const proceedButton = document.createElement('button');
-        proceedButton.textContent = "Proceed";
-        proceedButton.style = "margin-top: 2rem; font-size: 1.2rem;";
-        proceedButton.addEventListener('click', () => {
-            container.remove();
-            this.nextPhase();
-        });
+        const gameOver = isGameOver();
+
+        if (!gameOver) {
+            const proceedButton = document.createElement('button');
+            proceedButton.textContent = "Proceed";
+            proceedButton.style = "margin-top: 2rem; font-size: 1.2rem;";
+            proceedButton.addEventListener('click', () => {
+                container.remove();
+                this.nextPhase();
+            });
+            this.container.innerHTML = '';
+            this.container.appendChild(proceedButton);
+        } else {
+            // TODO: game over.
+            alert("Game Over!");
+        }
+
     }
 
     render() {
@@ -126,4 +138,11 @@ class VotePhase {
         this.container.appendChild(this.gridContainer);
         document.body.appendChild(this.container);
     }
+
+    nextPhase() {
+        // TODO: Move to kill phase
+    }
 }
+
+
+export { VotePhase };
