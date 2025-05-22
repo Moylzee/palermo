@@ -13,7 +13,7 @@ Voting
 everyone closes their eyes, and the murders pick who to kill.
 ------------
 
-TIMER -> VOTING -> KILL -> TIMER ...
+TIMER -> VOTING -> CHECK IF GAME IS OVER -> KILL -> TIMER ...
 
 Voting system
 [Player-Profile]
