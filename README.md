@@ -22,3 +22,6 @@ Voting system
 - Votes
 
 Available actions: Kill [Available to murders]
+
+
+when role is given, add a description of the role 
