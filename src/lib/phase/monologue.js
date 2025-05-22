@@ -1,8 +1,9 @@
 import { BasePhase } from './phase';
+import { TimerPhase } from './timer';
 
 class MonologuePhase extends BasePhase {
     constructor(selectedRoles = []) {
-        super('Monologue');
+        super('Monologue', 'description');
         this.selectedRoles = selectedRoles;
     }
 
@@ -11,6 +12,7 @@ class MonologuePhase extends BasePhase {
             'It is Night Time in Palermo.',
             'Everyone close your eyes.',
             'Both Murderers open your eyes and recognize each other.',
+            'Both Murderers now close your eyes.',
         ];
 
         if (this.selectedRoles.includes('Cop')) {
@@ -27,12 +29,20 @@ class MonologuePhase extends BasePhase {
 
         prompts.push(
             'Everyone close your eyes.',
-            'Everyone Lower your Hands',
+        );
+
+        if (this.selectedRoles.includes('Cop') || this.selectedRoles.includes('Snitch')) {
+            prompts.push(
+                'Everyone Lower your Hands.',
+            );
+        }
+
+        prompts.push(
             'It is Morning in Palermo.',
             'Everyone open your eyes.'
         );
 
-        return prompts.join('\n');
+        return prompts.join('<br>');
     }
 
     start() {
@@ -46,7 +56,7 @@ class MonologuePhase extends BasePhase {
         `;
 
         const monologueText = document.createElement('p');
-        monologueText.textContent = this.generateMonologue();
+        monologueText.innerHTML = this.generateMonologue();
         container.appendChild(monologueText);
 
         const proceedButton = document.createElement('button');
@@ -59,6 +69,11 @@ class MonologuePhase extends BasePhase {
 
         container.appendChild(proceedButton);
         document.body.appendChild(container);
+    }
+
+    nextPhase() {
+        const timerPhase = new TimerPhase();
+        timerPhase.showTimer();
     }
 }
 

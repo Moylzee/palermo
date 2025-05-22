@@ -60,3 +60,5 @@ render() {
     document.body.appendChild(this.container);
 }
 }
+
+export { VotePhase };

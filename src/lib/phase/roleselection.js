@@ -1,6 +1,7 @@
 import { BasePhase } from "./phase";
 import { Player, playerList } from "../entity";
 import { showPlayerBox } from "../common";
+import { MonologuePhase } from "./monologue";
 
 class RoleSelectionPhase extends BasePhase {
     constructor() {
@@ -54,10 +55,16 @@ class RoleSelectionPhase extends BasePhase {
                 existingContainer.parentNode.removeChild(existingContainer);
             }
 
-            showPlayerBox(document.body, playerList.map(player => player.name));
+            this.playerBox = showPlayerBox(document.body, playerList.map(player => player.name));
 
-            this.showNextPhase();
-            // Show start button for next phase
+            const nextPhaseButton = document.createElement('button');
+            nextPhaseButton.textContent = 'Start Game';
+            nextPhaseButton.addEventListener('click', () => {
+                this.playerBox.parentNode.removeChild(this.playerBox);
+                nextPhaseButton.parentNode.removeChild(nextPhaseButton);
+                this.showNextPhase();
+            });
+            document.body.appendChild(nextPhaseButton);
             return;
         }
 
@@ -67,7 +74,7 @@ class RoleSelectionPhase extends BasePhase {
             existingContainer.parentNode.removeChild(existingContainer);
         }
 
-        showPlayerBox(document.body, playerList.map(player => player.name));
+        this.playerBox = showPlayerBox(document.body, playerList.map(player => player.name));
 
 
 
@@ -118,6 +125,8 @@ class RoleSelectionPhase extends BasePhase {
 
     showNextPhase() {
         // TODO: Add next button to start the next phase [monologue phase]
+        const monologue = new MonologuePhase(this.roles);
+        monologue.start();
     }
 
 

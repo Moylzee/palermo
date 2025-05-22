@@ -1,11 +1,13 @@
 import { BasePhase } from "./phase";
+import { VotePhase } from "./vote";
+import gameSettings from "../gamesettings";
 
 class TimerPhase extends BasePhase {
     constructor() {
         super('Timer', 'Discussion time countdown before proceeding.');
         this.timerContainer = null;
         this.timerInterval = null;
-        this.timeLeft = 5 * 60; // Default 5 minutes
+        this.timeLeft = 1 * 5; // Default 5 minutes
     }
 
     showTimer() {
@@ -88,6 +90,11 @@ class TimerPhase extends BasePhase {
         this.timerContainer.appendChild(proceedButton);
     }
 
+    nextPhase() {
+        const votePhase = new VotePhase(gameSettings.numberOfPlayers);
+        votePhase.render();
+    }
+
     deleteTimerUI() {
         if (this.timerContainer) {
             this.timerContainer.remove();
@@ -95,5 +102,4 @@ class TimerPhase extends BasePhase {
     }
 }
 
-const timerPhase = new TimerPhase();
-export { timerPhase };
+export { TimerPhase };

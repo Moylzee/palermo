@@ -95,6 +95,7 @@ function showPlayerBox(parent, playerNameList) {
     }
 
     parent.appendChild(playerBox);
+    return playerBox;
 }
 
 export { createPlayerIconsContainer, showPlayerIcons, showPlayerBox };
