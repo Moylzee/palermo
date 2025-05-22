@@ -70,10 +70,10 @@ class SettingsPhase extends BasePhase {
                 const selectedOptionalRoles = Array.from(roleList.querySelectorAll('input[name="roleOption"]:checked')).map(cb => cb.value);
                 console.log('Selected optional roles:', selectedOptionalRoles);
                 const roleSelectionPhase = new RoleSelectionPhase();
-                roleSelectionPhase.setOptionalRoles(selectedOptionalRoles);
-                roleSelectionPhase.setNumberOfPlayers(this.numberOfPlayers);
                 console.log('Role selection phase created and starting');
-                roleSelectionPhase.start();
+                // clear container
+                container.innerHTML = '';
+                roleSelectionPhase.start(this.numberOfPlayers, selectedOptionalRoles);
             })
             container.appendChild(startAssignmentButton);
         });
