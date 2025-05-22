@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoke app.js</title>
+</head>
+<body>
+    <button id="invokeBtn">Run app.js</button>
+    <script>
+        document.getElementById('invokeBtn').addEventListener('click', function() {
+            fetch('app.js')
+                .then(response => response.text())
+                .then(code => {
+                    eval(code);
+                    if (typeof buttonPressed === 'function') buttonPressed();
+                })
+                .catch(err => alert('Error running app.js: ' + err));
+        });
+    </script>
+</body>
+</html>
