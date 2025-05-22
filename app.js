@@ -15,7 +15,7 @@ document.getElementById('submitPlayers').addEventListener('click', () => {
     const availableRoles = roleRules[totalPlayers] || [];
 
     const roleList = document.getElementById('roles');
-    roleList.innerHTML = '<h3>Select Optional Roles (Murderers are auto-included)</h3>';
+    roleList.innerHTML = '<h3>Select Optional Roles</h3>';
 
     availableRoles.forEach(role => {
         const label = document.createElement('label');

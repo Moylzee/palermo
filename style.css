@@ -36,8 +36,7 @@ button:hover {
 }
 
 #playerInputs,
-#roleSelection,
-#assignments {
+#roleSelection {
     margin-top: 20px;
     padding: 15px;
     background: white;
