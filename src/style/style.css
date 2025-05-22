@@ -67,3 +67,32 @@ li {
 .visible {
     display: block !important;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#gridContainer {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+}
+
+.gridCell {
+  background: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2rem;
+  border: 2px solid black; 
+  box-sizing: border-box;  
+}
