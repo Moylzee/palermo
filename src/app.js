@@ -1,3 +1,5 @@
+import { settingsPhase } from "./lib/phase/settings";
+
 const optionalRoles = ['Cop', 'Madness', 'BulletProof', 'Snitch'];
 const roleRules = {
     7: ['Cop'],
@@ -10,95 +12,100 @@ let currentPlayerIndex = 0;
 let rolePool = [];
 let playerAssignments = [];
 
-document.getElementById('submitPlayers').addEventListener('click', () => {
-    console.log('User clicked continue');
-    totalPlayers = parseInt(document.getElementById('numPlayers').value, 10);
-    console.log('Total players:', totalPlayers);
-    const availableRoles = roleRules[totalPlayers] || [];
+settingsPhase.showPlayerCounter();
 
-    const roleList = document.getElementById('roles');
-    roleList.innerHTML = '<h3>Select Optional Roles</h3>';
+// document.getElementById('submitPlayers').addEventListener('click', () => {
+//     console.log('User clicked continue');
+//     totalPlayers = parseInt(document.getElementById('numPlayers').value, 10);
+//     console.log('Total players:', totalPlayers);
+//     const availableRoles = roleRules[totalPlayers] || [];
 
-    availableRoles.forEach(role => {
-        const label = document.createElement('label');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.value = role;
-        checkbox.name = 'roleOption';
+//     const roleList = document.getElementById('roles');
+//     roleList.innerHTML = '<h3>Select Optional Roles</h3>';
 
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(role));
-        roleList.appendChild(label);
-        roleList.appendChild(document.createElement('br'));
-    });
+//     availableRoles.forEach(role => {
+//         const label = document.createElement('label');
+//         const checkbox = document.createElement('input');
+//         checkbox.type = 'checkbox';
+//         checkbox.value = role;
+//         checkbox.name = 'roleOption';
 
-    document.getElementById('roleSelection').classList.remove('hidden');
-    document.getElementById('startAssignment').classList.remove('hidden');
-});
+//         label.appendChild(checkbox);
+//         label.appendChild(document.createTextNode(role));
+//         roleList.appendChild(label);
+//         roleList.appendChild(document.createElement('br'));
+//     });
 
-document.getElementById('startAssignment').addEventListener('click', () => {
-    const checkboxes = document.querySelectorAll('input[name="roleOption"]:checked');
-    const selectedOptionalRoles = Array.from(checkboxes).map(cb => cb.value);
+//     document.getElementById('roleSelection').classList.remove('hidden');
+//     document.getElementById('startAssignment').classList.remove('hidden');
+// });
 
-    rolePool = ['Murderer 1', 'Murderer 2', ...selectedOptionalRoles];
+// document.getElementById('startAssignment').addEventListener('click', () => {
+//     const checkboxes = document.querySelectorAll('input[name="roleOption"]:checked');
+//     const selectedOptionalRoles = Array.from(checkboxes).map(cb => cb.value);
 
-    // Add minimum 3 Civilians
-    for (let i = 0; i < 3; i++) rolePool.push('Civilian');
+//     rolePool = ['Murderer 1', 'Murderer 2', ...selectedOptionalRoles];
 
-    // Fill remainder with civilians
-    while (rolePool.length < totalPlayers) {
-        rolePool.push('Civilian');
-    }
+//     // Add minimum 3 Civilians
+//     for (let i = 0; i < 3; i++) rolePool.push('Civilian');
 
-    // Shuffle roles
-    for (let i = rolePool.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [rolePool[i], rolePool[j]] = [rolePool[j], rolePool[i]];
-    }
+//     // Fill remainder with civilians
+//     while (rolePool.length < totalPlayers) {
+//         rolePool.push('Civilian');
+//     }
 
-    document.getElementById('roleSelection').classList.add('hidden');
-    document.getElementById('startAssignment').classList.add('hidden');
-    document.getElementById('playerNameEntry').classList.remove('hidden');
+//     // Shuffle roles
+//     for (let i = rolePool.length - 1; i > 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [rolePool[i], rolePool[j]] = [rolePool[j], rolePool[i]];
+//     }
 
-    showNextPlayerInput();
-});
+//     document.getElementById('roleSelection').classList.add('hidden');
+//     document.getElementById('startAssignment').classList.add('hidden');
+//     document.getElementById('playerNameEntry').classList.remove('hidden');
 
-function showNextPlayerInput() {
-    if (currentPlayerIndex >= totalPlayers) {
-        document.getElementById('playerNameEntry').innerHTML = "<h3>All roles assigned!</h3>";
-        return;
-    }
+//     showNextPlayerInput();
+// });
 
-    const container = document.getElementById('playerNameEntry');
-    container.innerHTML = `
-        <h3>Player ${currentPlayerIndex + 1}, enter your name:</h3>
-        <input type="text" id="playerNameInput" placeholder="Player Name" />
-    `;
-    const button = document.createElement('button');
-    button.textContent = 'See Role';
-    button.addEventListener('click', assignRoleToCurrentPlayer);
-    container.appendChild(button);
-}
+// function showNextPlayerInput() {
+//     if (currentPlayerIndex >= totalPlayers) {
+//         document.getElementById('playerNameEntry').innerHTML = "<h3>All roles assigned!</h3>";
 
-function assignRoleToCurrentPlayer() {
-    const nameInput = document.getElementById('playerNameInput');
-    const playerName = nameInput.value.trim() || `Player ${currentPlayerIndex + 1}`;
+//         // Show start button for next phase
+//         monologuePhase.startPhaseButton(document.getElementById('playerNameEntry'));
+//         return;
+//     }
 
-    const assignedRole = rolePool[currentPlayerIndex];
-    playerAssignments.push({ name: playerName, role: assignedRole });
+//     const container = document.getElementById('playerNameEntry');
+//     container.innerHTML = `
+//         <h3>Player ${currentPlayerIndex + 1}, enter your name:</h3>
+//         <input type="text" id="playerNameInput" placeholder="Player Name" />
+//     `;
+//     const button = document.createElement('button');
+//     button.textContent = 'See Role';
+//     button.addEventListener('click', assignRoleToCurrentPlayer);
+//     container.appendChild(button);
+// }
 
-    const container = document.getElementById('playerNameEntry');
-    container.innerHTML = `
-        <h3>${playerName}, your role is:</h3>
-        <p><strong>${assignedRole}</strong></p>
-    `;
-    const button = document.createElement('button');
-    button.textContent = 'OK';
-    button.addEventListener('click', nextPlayer);
-    container.appendChild(button);
-}
+// function assignRoleToCurrentPlayer() {
+//     const nameInput = document.getElementById('playerNameInput');
+//     const playerName = nameInput.value.trim() || `Player ${currentPlayerIndex + 1}`;
 
-function nextPlayer() {
-    currentPlayerIndex++;
-    showNextPlayerInput();
-}
+//     const assignedRole = rolePool[currentPlayerIndex];
+//     playerAssignments.push({ name: playerName, role: assignedRole });
+
+//     const container = document.getElementById('playerNameEntry');
+//     container.innerHTML = `
+//         <h3>${playerName}, your role is:</h3>
+//         <p><strong>${assignedRole}</strong></p>
+//     `;
+//     const button = document.createElement('button');
+//     button.textContent = 'OK';
+//     button.addEventListener('click', nextPlayer);
+//     container.appendChild(button);
+// }
+
+// function nextPlayer() {
+//     currentPlayerIndex++;
+//     showNextPlayerInput();
+// }
