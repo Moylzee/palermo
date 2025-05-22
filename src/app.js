@@ -33,7 +33,7 @@ document.getElementById('submitPlayers').addEventListener('click', () => {
     });
 
     document.getElementById('roleSelection').classList.remove('hidden');
-    document.getElementById('startAssignment').classList.remove('hidden');
+    document.getElementById('startAssignment').hidden = false;;
 });
 
 document.getElementById('startAssignment').addEventListener('click', () => {
@@ -57,8 +57,8 @@ document.getElementById('startAssignment').addEventListener('click', () => {
     }
 
     document.getElementById('roleSelection').classList.add('hidden');
-    document.getElementById('startAssignment').classList.add('hidden');
     document.getElementById('playerNameEntry').classList.remove('hidden');
+    document.getElementById('startAssignment').hidden = false;
 
     showNextPlayerInput();
 });
