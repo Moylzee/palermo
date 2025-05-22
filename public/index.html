@@ -3,12 +3,44 @@
     <input type="number" id="numPlayers">
     <button id="submitPlayers">Continue</button>
 
-    <!-- Optional role selection (after number of players is submitted) -->
+    <!-- Optional role selection -->
     <div id="roleSelection" class="hidden">
         <div id="roles"></div>
-        <button id="startAssignment">Start Role Assignment</button>
     </div>
+
+    <button id="startAssignment" hidden="true">Confirm</button>
+
+    <!-- Player icons and names layout -->
+    <div id="playerIconsParent" style="width: 50%; display: flex; justify-content: center; align-items:end; margin-top: 20px;">
+        <div style="display: flex; flex-direction: row; background: #f5f5f5; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 16px; min-width: 300px; gap: 20px;">
+            
+            <!-- Responsive Player Icons Grid -->
+            <div id="playerIcons" style="
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+                gap: 10px;
+                justify-items: center;
+                align-items: center;
+                background: #e6f0ff;
+                border-radius: 6px;
+                padding: 10px;
+                flex: 1;
+                min-height: 200px;
+            ">
+                <!-- Icons will be injected here -->
+            </div>
+    
+            <!-- Player Names List -->
+            <div id="playerNamesBox" style="min-width: 150px;">
+                <h4 style="margin-top: 0;">Players</h4>
+                <ul id="playerNamesList" style="list-style: none; padding-left: 0; margin: 0;"></ul>
+            </div>
+        </div>
+    </div>
+    
+    
 
     <!-- Where each player will enter their name and see their role -->
     <div id="playerNameEntry" class="hidden"></div>
+
 </body>
