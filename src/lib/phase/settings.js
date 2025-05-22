@@ -1,6 +1,9 @@
 import { BasePhase } from "./phase";
 import { RoleSelectionPhase } from "./roleselection";
 import { optionalRoles, getAvailableRoles } from "../roles";
+import gameSettings from "../gamesettings";
+import { createPlayerIconsContainer, showPlayerIcons } from "../common";
+
 
 class SettingsPhase extends BasePhase {
     constructor() {
@@ -30,18 +33,17 @@ class SettingsPhase extends BasePhase {
         // Set number of players and start role selection phase
         setPlayerCountButton.addEventListener('click', () => {
             // clear roleList if it exists
-            const existingRoleList = document.getElementById('roleList');
-            const existingAssignmentButton = document.getElementById('startAssignmentButton');
-            if (existingRoleList) {
-                existingRoleList.parentNode.removeChild(existingRoleList);
-            }
-            if (existingAssignmentButton) {
-                existingAssignmentButton.parentNode.removeChild(existingAssignmentButton);
-            }
-
+           this.clearPrevious();
 
             const playerCount = document.getElementById('playerCountInput').value;
             this.numberOfPlayers = parseInt(playerCount, 10);
+            gameSettings.numberOfPlayers = this.numberOfPlayers;
+
+            // show icons
+            // create player icons div
+
+            const playerIconsContainer = createPlayerIconsContainer('playerIcons');
+            container.appendChild(playerIconsContainer);
 
             const availableRoles = getAvailableRoles(this.numberOfPlayers);
             const roleList = document.createElement('div');
@@ -55,6 +57,16 @@ class SettingsPhase extends BasePhase {
                 checkbox.type = 'checkbox';
                 checkbox.value = role;
                 checkbox.name = 'roleOption';
+                checkbox.addEventListener('change', () => {
+                    // redraw player icons based on selected roles
+                    const selectedRoles = Array.from(roleList.querySelectorAll('input[name="roleOption"]:checked')).map(cb => cb.value);
+                    let roles = ['Murderer 1', 'Murderer 2', ...selectedRoles];
+                    while(roles.length < playerCount) {
+                        roles.push('Civilian');
+                    }
+                    gameSettings.selectedRoles = roles;
+                    showPlayerIcons(playerIconsContainer, this.numberOfPlayers, roles);
+                });
 
                 label.appendChild(checkbox);
                 label.appendChild(document.createTextNode(role));
@@ -63,14 +75,19 @@ class SettingsPhase extends BasePhase {
             });
             container.appendChild(roleList);
 
+            let roles = ['Murderer 1', 'Murderer 2'];
+            while(roles.length < playerCount) {
+                roles.push('Civilian');
+            }
+            gameSettings.selectedRoles = roles;
+            showPlayerIcons(playerIconsContainer, this.numberOfPlayers, roles);
+
             const startAssignmentButton = document.createElement('button');
-            startAssignmentButton.textContent = 'Start Role Assignment';
+            startAssignmentButton.textContent = 'Confirm Player Count and Roles';
             startAssignmentButton.id = 'startAssignmentButton';
             startAssignmentButton.addEventListener('click', () => {
                 const selectedOptionalRoles = Array.from(roleList.querySelectorAll('input[name="roleOption"]:checked')).map(cb => cb.value);
-                console.log('Selected optional roles:', selectedOptionalRoles);
                 const roleSelectionPhase = new RoleSelectionPhase();
-                console.log('Role selection phase created and starting');
                 // clear container
                 container.innerHTML = '';
                 roleSelectionPhase.start(this.numberOfPlayers, selectedOptionalRoles);
@@ -81,6 +98,21 @@ class SettingsPhase extends BasePhase {
 
         document.body.appendChild(container);
         this.phaseUIElements.push(container);
+    }
+
+    clearPrevious() {
+        const existingRoleList = document.getElementById('roleList');
+        const existingAssignmentButton = document.getElementById('startAssignmentButton');
+        const existingPlayerIcons = document.getElementById('playerIcons');
+        if (existingRoleList) {
+            existingRoleList.parentNode.removeChild(existingRoleList);
+        }
+        if (existingAssignmentButton) {
+            existingAssignmentButton.parentNode.removeChild(existingAssignmentButton);
+        }
+        if (existingPlayerIcons) {
+            existingPlayerIcons.parentNode.removeChild(existingPlayerIcons);
+        }
     }
 
     deletePlayerCounter() {

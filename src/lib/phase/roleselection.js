@@ -1,5 +1,6 @@
 import { BasePhase } from "./phase";
 import { Player, playerList } from "../entity";
+import { showPlayerBox } from "../common";
 
 class RoleSelectionPhase extends BasePhase {
     constructor() {
@@ -39,7 +40,6 @@ class RoleSelectionPhase extends BasePhase {
             const j = Math.floor(Math.random() * (i + 1));
             [this.rolePool[i], this.rolePool[j]] = [this.rolePool[j], this.rolePool[i]]
         }
-
         // Get player names and assigne roles.
         this.showNextPlayerInput();
     }
@@ -53,21 +53,29 @@ class RoleSelectionPhase extends BasePhase {
             if (existingContainer) {
                 existingContainer.parentNode.removeChild(existingContainer);
             }
+
+            showPlayerBox(document.body, playerList.map(player => player.name));
+
             this.showNextPhase();
             // Show start button for next phase
             return;
         }
 
+        
         const existingContainer = document.getElementById('playerNameEntry');
         if (existingContainer) {
             existingContainer.parentNode.removeChild(existingContainer);
         }
 
+        showPlayerBox(document.body, playerList.map(player => player.name));
+
+
+
         // create div for player input
         const container = document.createElement('div');
         container.id = 'playerNameEntry';
         container.innerHTML = `
-            <h3>Player ${this.playerIndex + 1} Name:</h3>
+        <h3>Player ${this.playerIndex + 1} Name:</h3>
         `;
         const input = document.createElement('input');
         input.type = 'text';
