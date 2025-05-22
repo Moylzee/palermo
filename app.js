@@ -1,59 +1,96 @@
-const baseRoles = [
-    'Murderer 1',
-    'Murderer 2',
-    'Cop',
-    'Madness',    
-    'BulletProof',
-    'Snitch',
-];
+const optionalRoles = ['Cop', 'Madness', 'BulletProof', 'Snitch'];
+const roleRules = {
+    7: ['Cop'],
+    8: ['Cop', 'Snitch', 'BulletProof'],
+    9: ['Cop', 'Snitch', 'BulletProof', 'Madness']
+};
 
-const players = [
-    'Player 1',
-    'Player 2',
-    'Player 3',
-    'Player 4',
-    'Player 5',
-    'Player 6',
-    'Player 7',
-    'Player 8',
-    'Player 9',
-    'Player 10',
-];
+let totalPlayers = 0;
+let currentPlayerIndex = 0;
+let rolePool = [];
+let playerAssignments = [];
 
-function buttonPressed() {
-    console.log('Button pressed: app.js works!');
-    assignRoles();
-}
+document.getElementById('submitPlayers').addEventListener('click', () => {
+    totalPlayers = parseInt(document.getElementById('numPlayers').value, 10);
+    const availableRoles = roleRules[totalPlayers] || [];
 
-function assignRoles() {
-    const numCivilians = 3;
-    let rolesToAssign = [...baseRoles];
+    const roleList = document.getElementById('roles');
+    roleList.innerHTML = '<h3>Select Optional Roles (Murderers are auto-included)</h3>';
 
-    if (rolesToAssign.length + numCivilians > players.length) {
-        console.error("Too many unique roles for the number of players.");
+    availableRoles.forEach(role => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = role;
+        checkbox.name = 'roleOption';
+
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(role));
+        roleList.appendChild(label);
+        roleList.appendChild(document.createElement('br'));
+    });
+
+    document.getElementById('roleSelection').classList.remove('hidden');
+    document.getElementById('startAssignment').classList.remove('hidden');
+});
+
+document.getElementById('startAssignment').addEventListener('click', () => {
+    const checkboxes = document.querySelectorAll('input[name="roleOption"]:checked');
+    const selectedOptionalRoles = Array.from(checkboxes).map(cb => cb.value);
+
+    rolePool = ['Murderer 1', 'Murderer 2', ...selectedOptionalRoles];
+
+    // Add minimum 3 Civilians
+    for (let i = 0; i < 3; i++) rolePool.push('Civilian');
+
+    // Fill remainder with civilians
+    while (rolePool.length < totalPlayers) {
+        rolePool.push('Civilian');
+    }
+
+    // Shuffle roles
+    for (let i = rolePool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [rolePool[i], rolePool[j]] = [rolePool[j], rolePool[i]];
+    }
+
+    document.getElementById('roleSelection').classList.add('hidden');
+    document.getElementById('startAssignment').classList.add('hidden');
+    document.getElementById('playerNameEntry').classList.remove('hidden');
+
+    showNextPlayerInput();
+});
+
+function showNextPlayerInput() {
+    if (currentPlayerIndex >= totalPlayers) {
+        document.getElementById('playerNameEntry').innerHTML = "<h3>All roles assigned!</h3>";
         return;
     }
 
-    // Add exactly numCivilians 'Civilian' roles
-    for (let i = 0; i < numCivilians; i++) {
-        rolesToAssign.push('Civilian');
-    }
+    const container = document.getElementById('playerNameEntry');
+    container.innerHTML = `
+        <h3>Player ${currentPlayerIndex + 1}, enter your name:</h3>
+        <input type="text" id="playerNameInput" placeholder="Player Name" />
+        <button onclick="assignRoleToCurrentPlayer()">See Role</button>
+    `;
+}
 
-    // If roles are still less than players, fill with extra Civilians
-    while (rolesToAssign.length < players.length) {
-        rolesToAssign.push('Civilian');
-    }
+function assignRoleToCurrentPlayer() {
+    const nameInput = document.getElementById('playerNameInput');
+    const playerName = nameInput.value.trim() || `Player ${currentPlayerIndex + 1}`;
 
-    // Shuffle the roles
-    for (let i = rolesToAssign.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [rolesToAssign[i], rolesToAssign[j]] = [rolesToAssign[j], rolesToAssign[i]];
-    }
+    const assignedRole = rolePool[currentPlayerIndex];
+    playerAssignments.push({ name: playerName, role: assignedRole });
 
-    const assignments = {};
-    players.forEach((player, idx) => {
-        assignments[player] = rolesToAssign[idx];
-    });
+    const container = document.getElementById('playerNameEntry');
+    container.innerHTML = `
+        <h3>${playerName}, your role is:</h3>
+        <p><strong>${assignedRole}</strong></p>
+        <button onclick="nextPlayer()">OK</button>
+    `;
+}
 
-    console.log(assignments);
+function nextPlayer() {
+    currentPlayerIndex++;
+    showNextPlayerInput();
 }
