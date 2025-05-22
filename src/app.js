@@ -1,4 +1,5 @@
 import { settingsPhase } from "./lib/phase/settings";
+import { timerPhase } from "./lib/phase/timer";
 
 const optionalRoles = ['Cop', 'Madness', 'BulletProof', 'Snitch'];
 const roleRules = {
