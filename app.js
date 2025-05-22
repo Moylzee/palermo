@@ -1,6 +1,3 @@
-import { db} from "./lib/firebase";
-import { collection, addDoc } from "firebase/firestore";
-
 const optionalRoles = ['Cop', 'Madness', 'BulletProof', 'Snitch'];
 const roleRules = {
     7: ['Cop'],
