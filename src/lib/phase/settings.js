@@ -1,13 +1,15 @@
 import { BasePhase } from "./phase";
 import { RoleSelectionPhase } from "./roleselection";
-import { optionalRoles, getAvailableRoles } from "../roles";
+import { getAvailableRoles } from "../roles";
 import gameSettings from "../gamesettings";
 import { createPlayerIconsContainer, showPlayerIcons } from "../common";
 
+import '../../style/settingsPhase.css';
 
 class SettingsPhase extends BasePhase {
     constructor() {
         super('Settings', 'Enter number of players and select optional roles.');
+        loadSettingsPhaseStyle();
     }
 
     showPlayerCounter() {
@@ -90,6 +92,8 @@ class SettingsPhase extends BasePhase {
                 const roleSelectionPhase = new RoleSelectionPhase();
                 // clear container
                 container.innerHTML = '';
+                // clear style
+                document.getElementById('settingsPhaseStyle').parentNode.removeChild(document.getElementById('settingsPhaseStyle'));
                 roleSelectionPhase.start(this.numberOfPlayers, selectedOptionalRoles);
             })
             container.appendChild(startAssignmentButton);
@@ -120,6 +124,16 @@ class SettingsPhase extends BasePhase {
         if (container) {
             container.parentNode.removeChild(container);
         }
+    }
+}
+
+function loadSettingsPhaseStyle() {
+    if (!document.getElementById('settingsPhaseStyle')) {
+        const style = document.createElement('link');
+        style.id = 'settingsPhaseStyle';
+        style.rel = 'stylesheet';
+        style.href = '/src/style/settingsPhase.css';
+        document.head.appendChild(style);
     }
 }
 
