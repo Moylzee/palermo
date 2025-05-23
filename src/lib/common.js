@@ -105,74 +105,53 @@ function showPlayerBox(parent, playerNameList) {
 }
 
 function getActivePlayers() {
-    const activePlayers = [];
-    for (let i = 0; i < playerList.length; i++) {
-        if (playerList[i].alive || !playerList[i].votedOut) {
-            activePlayers.push(playerList[i]);
-        }
-    }
-    return activePlayers;
+    return playerList
+        .filter(p => p.alive && !p.votedOut);
 }
 
 function getPlayerRoles() {
-    const playerRoles = [];
-    for (let i = 0; i < playerList.length; i++) {
-        if (playerList[i].alive || !playerList[i].votedOut) {
-            playerRoles.push(playerList[i].role);
-        }
-    }
-    return playerRoles;
+    return playerList
+        .filter(p => p.alive && !p.votedOut)
+        .map(p => p.role);
 }
 
 function isGameOver() {
-    // MADNESS
-    const votedOutMadness = playerList.some(
-        player => player.votedOut && player.role === "Madness"
-    );
+    if (playerList.some(player => player.votedOut && player.role === "Madness")) return true;
 
-    if (votedOutMadness) {
-        return true;
-    }
+    const activePlayers = getActivePlayers();
+    const activeRoles = activePlayers.map(player => player.role);
 
-    var activePlayers = getActivePlayers();
-    var activePlayersRoles = getPlayerRoles();
+    let goodPlayers = 0;
+    let badPlayers = 0;
+    let numMurderers = 0;
 
-    var goodPlayers = 0;
-    var badPlayers = 0;
-    var numMurderers = 0;
-
-    for (let i = 0; i < activePlayersRoles.length; i++) {
-        switch (activePlayersRoles[i]) {
-            case 'Murderer 1':
+    for (const role of activeRoles) {
+        switch (role) {
+            case "Murderer 1":
+            case "Murderer 2":
                 badPlayers++;
                 numMurderers++;
                 break;
-            case 'Murderer 2':
+            case "Snitch":
                 badPlayers++;
-                numMurderers++;
                 break;
-            case 'Snitch':
-                badPlayers++;
             default:
                 goodPlayers++;
                 break;
         }
     }
 
-    // If Both Murderers are dead
-    if (numMurderers == 0) {
-        return true;
-    }
+    if (numMurderers === 0) return true;
 
-    // If number of players == 4 and active bad == 2
-    if (activePlayers.length == 4 && badPlayers ==  2) {
+    // special conditions
+    if (
+        (activePlayers.length === 4 && badPlayers === 2) ||
+        (activePlayers.length === 5 && badPlayers === 3) ||
+        (activePlayers.length === 2 && numMurderers > 0)
+    ) {
         return true;
     }
-
-    // If number of players == 5 and active bad == 3
-    if (activePlayers.length == 5 && badPlayers == 3) {
-        return true;
-    }
+    return false;
 }
 
 

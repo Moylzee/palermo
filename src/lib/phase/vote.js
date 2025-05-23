@@ -1,6 +1,7 @@
 import { isGameOver } from "../common";
 import { KillPhase } from "./kill";
-import { playerList } from "../entity";
+import { playerList, getPlayerByName } from "../entity";
+import { getActivePlayers } from "../common";
 
 class VotePhase {
     constructor(numberOfPlayers) {
@@ -12,7 +13,7 @@ class VotePhase {
         this.gridContainer = null;
 
         this.currentVoter = 0; // index of current player voting
-        this.currentVoterObject = playerList[0];
+        this.currentVoterObject = getActivePlayers()[0];
         this.votes = new Array(numberOfPlayers).fill(0); // votes received by each player
     }
 
@@ -62,12 +63,15 @@ class VotePhase {
         // Register the vote
         this.votes[votedIndex]++;
         
+        console.log(`There are ${getActivePlayers().length} players left.`);
+
         // Move to next voter
         this.currentVoter++;
-        this.currentVoterObject = playerList[this.currentVoter];
-        playerList[votedIndex].votes++;
-
-        if (this.currentVoter < this.numberOfPlayers) {
+        this.currentVoterObject = getActivePlayers()[this.currentVoter];
+        const player = getPlayerByName(voteName);
+        player.votes++;
+        console.log(`Player ${player.name} received a vote. Total votes: ${player.votes}`);
+        if (this.currentVoter < getActivePlayers().length) {
         // Update header for next voter
             this.header.textContent = `${this.currentVoterObject.name}, Vote A Player Out`;
         } else {
@@ -85,6 +89,10 @@ class VotePhase {
         let message;
         if (votedOutPlayers.length === 1) {
             message = `${votedOutPlayers[0].name} is voted out with ${maxVotes} votes!`;
+            // set the player who war voted out to voted out state
+            const index = playerList.indexOf(votedOutPlayers[0]);
+            playerList[index].votedOut = true;
+            console.log(`Player ${playerList[index].name} is voted out!. Status: ${playerList[index].votedOut}`);
         } else {
             message = `Tie! Players ${votedOutPlayers.map(p => p.name).join(', ')} have ${maxVotes} votes each.`;
         }
@@ -92,6 +100,7 @@ class VotePhase {
         alert(message);
 
         const gameOver = isGameOver();
+        console.log("Game Over: " + gameOver);
 
         if (!gameOver) {
             const proceedButton = document.createElement('button');
@@ -113,7 +122,7 @@ class VotePhase {
     render() {
         // Remove existing container if exists
         if (this.container) {
-        this.container.remove();
+            this.container.remove();
         }
 
         this.container = document.createElement('div');
@@ -132,11 +141,17 @@ class VotePhase {
         this.gridContainer.style.height = `calc(100vh - 60px)`;
         this.gridContainer.style.borderTop = '2px solid white';
 
-        // Add player boxes
-        for (let i = 0; i < playerList.length; i++) {
-            const box = this.createGridBox(i, playerList[i].name);
+        // Add player boxes for the active players for voting phase
+        console.log('\n');
+        console.log('Active players:');
+        const activePlayers = getActivePlayers();
+        activePlayers.forEach(p => {
+            console.log(`Player ${p.name}, Role: ${p.role}, VotedOut: ${p.votedOut}, Killed: ${!p.alive}`);
+            if (p.votedOut || !p.alive) return;
+            const box = this.createGridBox(playerList.indexOf(p), p.name);
             this.gridContainer.appendChild(box);
-        }
+        })
+
 
         this.container.appendChild(this.gridContainer);
         document.body.appendChild(this.container);
@@ -144,6 +159,10 @@ class VotePhase {
 
     nextPhase() {
         // TODO: Move to kill phase
+
+        playerList.forEach(player => {
+            player.votes = 0; // Reset votes for next round
+        });
 
         const killPhase = new KillPhase();
         killPhase.render();

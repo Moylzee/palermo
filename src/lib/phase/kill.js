@@ -1,4 +1,5 @@
-import { getActivePlayers } from "../common";
+import { getActivePlayers, isGameOver } from "../common";
+import { TimerPhase } from "./timer";
 
 class KillPhase {
     constructor() {
@@ -40,7 +41,7 @@ class KillPhase {
         proceedButton.textContent = "Proceed";
         proceedButton.style = "margin-top: 2rem; font-size: 1.2rem;";
         proceedButton.addEventListener('click', () => {
-            container.remove();
+            this.container.remove();
             this.nextPhase();
         });
 
@@ -64,6 +65,7 @@ class KillPhase {
         grid.style.gap = '10px';
 
         this.activePlayers.forEach(player => {
+            console.log(`player ${player.name}, ${player.role}, ${player.votedOut}`);
             if (player.role == "Murderer 1" || player.role == "Murderer 2") return;
             
             const btn = document.createElement('button');
@@ -71,7 +73,11 @@ class KillPhase {
             btn.style.padding = '1em';
             btn.style.background = '#eee';
 
-            btn.addEventListener('click', () => this.handleSelect(player.name));
+            btn.addEventListener('click', () => {
+                this.handleSelect(player.name)
+                console.log('Someone has been killed')
+                isGameOver();
+            });
             grid.appendChild(btn);
         });
 
@@ -98,6 +104,11 @@ class KillPhase {
         this.container.appendChild(startBtn);
 
         document.body.appendChild(this.container);
+    }
+
+    nextPhase() {
+        const timerPhase = new TimerPhase();
+        timerPhase.showTimer();
     }
 }
 

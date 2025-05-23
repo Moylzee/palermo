@@ -23,4 +23,8 @@ class Player {
 
 const playerList = [];
 
-export { Player, playerList };
+function getPlayerByName(name) {
+    return playerList.find(player => player.name === name);
+}
+
+export { Player, playerList, getPlayerByName };
