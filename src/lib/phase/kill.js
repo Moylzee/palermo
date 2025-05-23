@@ -64,6 +64,8 @@ class KillPhase {
         grid.style.gap = '10px';
 
         this.activePlayers.forEach(player => {
+            if (player.role == "Murderer 1" || player.role == "Murderer 2") return;
+            
             const btn = document.createElement('button');
             btn.textContent = player.name;
             btn.style.padding = '1em';

@@ -4,6 +4,7 @@ class Player {
         this.role = role;
         this.alive = true;
         this.votedOut = false;
+        this.votes = 0;
     }
 
     voteOut() {

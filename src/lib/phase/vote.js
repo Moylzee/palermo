@@ -1,5 +1,6 @@
 import { isGameOver } from "../common";
 import { KillPhase } from "./kill";
+import { playerList } from "../entity";
 
 class VotePhase {
     constructor(numberOfPlayers) {
@@ -11,6 +12,7 @@ class VotePhase {
         this.gridContainer = null;
 
         this.currentVoter = 0; // index of current player voting
+        this.currentVoterObject = playerList[0];
         this.votes = new Array(numberOfPlayers).fill(0); // votes received by each player
     }
 
@@ -26,14 +28,14 @@ class VotePhase {
         header.style.alignItems = 'center';
         header.style.userSelect = 'none';
 
-        header.textContent = `Player ${this.currentVoter + 1}, Vote A Player Out`;
+        header.textContent = `${this.currentVoterObject.name}, Vote A Player Out`;
         return header;
     }
 
-    createGridBox(index) {
+    createGridBox(index, name) {
         const box = document.createElement('div');
         box.className = 'gridBox';
-        box.textContent = `Player ${index + 1}`;
+        box.textContent = `${name}`;
         box.style.cursor = 'pointer';
         box.style.border = '1px solid white';
         box.style.display = 'flex';
@@ -45,46 +47,46 @@ class VotePhase {
 
         // Clicking votes for this player if it's current voter's turn
         box.addEventListener('click', () => {
-        // Can't vote for yourself
-        if (index === this.currentVoter) {
-            alert("You can't vote for yourself!");
-            return;
-        }
-        this.registerVote(index);
+            // Can't vote for yourself
+            if (name === this.currentVoterObject.name) {
+                alert("You can't vote for yourself!");
+                return;
+            }
+            this.registerVote(index, name);
         });
 
         return box;
     }
 
-    registerVote(votedIndex) {
+    registerVote(votedIndex, voteName) {
         // Register the vote
         this.votes[votedIndex]++;
         
         // Move to next voter
         this.currentVoter++;
+        this.currentVoterObject = playerList[this.currentVoter];
+        playerList[votedIndex].votes++;
 
         if (this.currentVoter < this.numberOfPlayers) {
         // Update header for next voter
-        this.header.textContent = `Player ${this.currentVoter + 1}, Vote A Player Out`;
+            this.header.textContent = `${this.currentVoterObject.name}, Vote A Player Out`;
         } else {
-        // Voting complete, show results
-        this.showResults();
+            // Voting complete, show results
+            this.showResults();
         }
     }
 
     showResults() {
         // Find the player(s) with the highest votes
-        const maxVotes = Math.max(...this.votes);
-        const votedOutPlayers = this.votes
-        .map((v, i) => ({ player: i + 1, votes: v }))
-        .filter(({ votes }) => votes === maxVotes)
-        .map(({ player }) => player);
+        const maxVotes = Math.max(...playerList.map(p => p.votes));
+        const votedOutPlayers = playerList
+            .filter(p => p.votes === maxVotes);
 
         let message;
         if (votedOutPlayers.length === 1) {
-            message = `Player ${votedOutPlayers[0]} is voted out with ${maxVotes} votes!`;
+            message = `${votedOutPlayers[0].name} is voted out with ${maxVotes} votes!`;
         } else {
-            message = `Tie! Players ${votedOutPlayers.join(', ')} have ${maxVotes} votes each.`;
+            message = `Tie! Players ${votedOutPlayers.map(p => p.name).join(', ')} have ${maxVotes} votes each.`;
         }
 
         alert(message);
@@ -131,9 +133,9 @@ class VotePhase {
         this.gridContainer.style.borderTop = '2px solid white';
 
         // Add player boxes
-        for (let i = 0; i < this.numberOfPlayers; i++) {
-        const box = this.createGridBox(i);
-        this.gridContainer.appendChild(box);
+        for (let i = 0; i < playerList.length; i++) {
+            const box = this.createGridBox(i, playerList[i].name);
+            this.gridContainer.appendChild(box);
         }
 
         this.container.appendChild(this.gridContainer);
