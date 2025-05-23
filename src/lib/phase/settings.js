@@ -33,7 +33,7 @@ class SettingsPhase extends BasePhase {
         // Set number of players and start role selection phase
         setPlayerCountButton.addEventListener('click', () => {
             // clear roleList if it exists
-           this.clearPrevious();
+            this.clearPrevious();
 
             const playerCount = document.getElementById('playerCountInput').value;
             this.numberOfPlayers = parseInt(playerCount, 10);

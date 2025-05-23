@@ -76,8 +76,6 @@ class RoleSelectionPhase extends BasePhase {
 
         this.playerBox = showPlayerBox(document.body, playerList.map(player => player.name));
 
-
-
         // create div for player input
         const container = document.createElement('div');
         container.id = 'playerNameEntry';
@@ -94,17 +92,23 @@ class RoleSelectionPhase extends BasePhase {
         const button = document.createElement('button');
         button.textContent = 'Assign Role';
         button.addEventListener('click', () => {
-            const playerRole = this.assignRoleToCurrentPlayer(this.playerIndex);
-            const playerName = input.value.trim() || `Player ${index + 1}`;
-
-            const player = new Player(playerName, playerRole);
+            const enteredName = input.value.trim();
+            const isDuplicate = playerList.some(player => player.name.toLowerCase() === enteredName.toLowerCase());
+        
+            if (isDuplicate) {
+                alert("This name has already been taken. Please choose a different name.");
+                return;
+            }
+        
+            const playerRole = this.assignRoleToCurrentPlaye0r(this.playerIndex);
+            const player = new Player(enteredName, playerRole);
             playerList.push(player);
-
+        
             // show the assigned role
             const roleLabel = document.createElement('h3');
-            roleLabel.textContent = `${playerName}, your role is: ${playerRole}`;
+            roleLabel.textContent = `${enteredName}, your role is: ${playerRole}`;
             container.appendChild(roleLabel);
-
+        
             // create button for next player
             const nextButton = document.createElement('button');
             nextButton.textContent = 'OK';
@@ -113,7 +117,11 @@ class RoleSelectionPhase extends BasePhase {
                 this.showNextPlayerInput();
             });
             container.appendChild(nextButton);
-        });
+        
+            // Disable input and assign button after successful input
+            input.disabled = true;
+            button.disabled = true;
+        });        
         container.appendChild(button);
         document.body.appendChild(container);
     }
