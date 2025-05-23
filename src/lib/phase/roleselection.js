@@ -76,8 +76,6 @@ class RoleSelectionPhase extends BasePhase {
 
         this.playerBox = showPlayerBox(document.body, playerList.map(player => player.name));
 
-
-
         // create div for player input
         const container = document.createElement('div');
         container.id = 'playerNameEntry';
@@ -106,10 +104,13 @@ class RoleSelectionPhase extends BasePhase {
             const player = new Player(enteredName, playerRole);
             playerList.push(player);
         
+        
             // show the assigned role
             const roleLabel = document.createElement('h3');
             roleLabel.textContent = `${enteredName}, your role is: ${playerRole}`;
+            roleLabel.textContent = `${enteredName}, your role is: ${playerRole}`;
             container.appendChild(roleLabel);
+        
         
             // create button for next player
             const nextButton = document.createElement('button');
