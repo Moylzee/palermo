@@ -15,11 +15,9 @@ function createPlayerIconsContainer(id) {
     playerIconsContainer.style.gap = '10px';
     playerIconsContainer.style.justifyItems = 'center';
     playerIconsContainer.style.alignItems = 'center';
-    playerIconsContainer.style.backgroundColor = '#e6f0ff';
-    playerIconsContainer.style.borderRadius = '6px';
-    playerIconsContainer.style.padding = '10px';
+    playerIconsContainer.style.borderRadius = '3px';
+    playerIconsContainer.style.padding = '5px';
     playerIconsContainer.style.flex = '1';
-    playerIconsContainer.style.minHeight = '200px';
 
     return playerIconsContainer;
 }
@@ -71,28 +69,37 @@ function getRoleIconAndColor(role) {
     }
 }
 
-
 function showPlayerBox(parent, playerNameList) {
     const existingPlayerBox = document.getElementById('playerNameBox');
     if (existingPlayerBox) {
-        existingPlayerBox.parentNode.removeChild(existingPlayerBox);
+        existingPlayerBox.remove();
     }
 
     const playerBox = document.createElement('div');
     playerBox.id = 'playerNameBox';
+    playerBox.style.position = 'absolute';
+    playerBox.style.top = '10px';
+    playerBox.style.right = '10px';
+    playerBox.style.background = 'lightgray';
+    playerBox.style.border = '1px solid #ccc';
+    playerBox.style.borderRadius = '5px';
     playerBox.style.minWidth = '150px';
+    playerBox.style.zIndex = '1000';
+    playerBox.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
 
-    const title = document.createElement('h4');
-    title.style.marginTop = '0';
-    title.innerHTML = 'Players';
-    playerBox.appendChild(title);
+    const title = document.createElement('div');
+    title.style.cursor = 'pointer';
+    title.style.padding = '8px';
+    title.style.backgroundColor = '#ddd';
+    title.style.fontWeight = 'bold';
+    title.textContent = 'Players ▼';
 
     const nameList = document.createElement('ul');
-    nameList.id='playerNameList';
+    nameList.id = 'playerNameList';
     nameList.style.listStyle = 'none';
-    nameList.style.paddingLeft = '0';
+    nameList.style.padding = '8px';
     nameList.style.margin = '0';
-    playerBox.appendChild(nameList);
+    nameList.style.display = 'none'; // hidden by default
 
     for (let i = 0; i < playerNameList.length; i++) {
         const li = document.createElement('li');
@@ -100,9 +107,19 @@ function showPlayerBox(parent, playerNameList) {
         nameList.appendChild(li);
     }
 
+    // Toggle visibility
+    title.addEventListener('click', () => {
+        const isVisible = nameList.style.display === 'block';
+        nameList.style.display = isVisible ? 'none' : 'block';
+        title.textContent = `Players ${isVisible ? '▼' : '▲'}`;
+    });
+
+    playerBox.appendChild(title);
+    playerBox.appendChild(nameList);
     parent.appendChild(playerBox);
     return playerBox;
 }
+
 
 function getActivePlayers() {
     return playerList

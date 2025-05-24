@@ -13,46 +13,67 @@ class SettingsPhase extends BasePhase {
     }
 
     showPlayerCounter() {
-        // make a container for the player counter and attach it to the body
+        // Create the main wrapper with flex layout
+        const wrapper = document.createElement('div');
+        wrapper.id = 'settingsWrapper';
+        wrapper.style.display = 'flex';
+        wrapper.style.gap = '20px';
+        wrapper.style.alignItems = 'flex-start';
 
-        // Create DOM properties
-        const container = document.createElement('div');
-        container.id = 'playerCounter';
-        container.innerHTML = `
-            <h3>Number of Players:</h3>
-        `;
+        // Counter container
+        const counterContainer = document.createElement('div');
+        counterContainer.id = 'playerCounter';
+        counterContainer.innerHTML = `<h3>Number of Players:</h3>`;
+
         const playerCountInput = document.createElement('input');
         playerCountInput.type = 'number';
         playerCountInput.id = 'playerCountInput';
         playerCountInput.min = 4;
         playerCountInput.max = 20;
         playerCountInput.value = 4;
-        container.appendChild(playerCountInput);
+        counterContainer.appendChild(playerCountInput);
 
         const setPlayerCountButton = document.createElement('button');
         setPlayerCountButton.textContent = 'Set Player Count';
-        
-        // Set number of players and start role selection phase
+        counterContainer.appendChild(setPlayerCountButton);
+
+        // Role selection container
+        const roleContainer = document.createElement('div');
+        roleContainer.id = 'roleSelectionContainer';
+        roleContainer.style.display = 'none';  // Hide initially
+
+        // Add both to the wrapper
+        wrapper.appendChild(counterContainer);
+        wrapper.appendChild(roleContainer);
+
+        // Append wrapper to body
+        document.body.appendChild(wrapper);
+        this.phaseUIElements.push(wrapper);
+
+        // Handle button click
         setPlayerCountButton.addEventListener('click', () => {
-            // clear roleList if it exists
             this.clearPrevious();
+            counterContainer.style.display = 'none';
+            const playerCount = parseInt(playerCountInput.value, 10);
+            this.numberOfPlayers = playerCount;
+            gameSettings.numberOfPlayers = playerCount;
 
-            const playerCount = document.getElementById('playerCountInput').value;
-            this.numberOfPlayers = parseInt(playerCount, 10);
-            gameSettings.numberOfPlayers = this.numberOfPlayers;
+            roleContainer.style.display = 'block'; 
+            // Clear and rebuild role selection
+            roleContainer.innerHTML = '';
 
-            // show icons
-            // create player icons div
-
-            const playerIconsContainer = createPlayerIconsContainer('playerIcons');
-            container.appendChild(playerIconsContainer);
-
-            const availableRoles = getAvailableRoles(this.numberOfPlayers);
+            // Place roleList above icons
+            const availableRoles = getAvailableRoles(playerCount);
             const roleList = document.createElement('div');
             roleList.id = 'roleList';
-            roleList.innerHTML = `
-                <h3>Select Optional Roles:</h3>
-            `;
+            roleList.style.position = 'relative';
+
+            if (this.numberOfPlayers < 7) {
+                roleList.innerHTML = `<h3>Not enough players for extra roles</h3>`;
+            } else {
+                roleList.innerHTML = `<h3>Select Optional Roles:</h3>`;
+            }
+
             availableRoles.forEach(role => {
                 const label = document.createElement('label');
                 const checkbox = document.createElement('input');
@@ -60,14 +81,11 @@ class SettingsPhase extends BasePhase {
                 checkbox.value = role;
                 checkbox.name = 'roleOption';
                 checkbox.addEventListener('change', () => {
-                    // redraw player icons based on selected roles
                     const selectedRoles = Array.from(roleList.querySelectorAll('input[name="roleOption"]:checked')).map(cb => cb.value);
                     let roles = ['Murderer 1', 'Murderer 2', ...selectedRoles];
-                    while(roles.length < playerCount) {
-                        roles.push('Civilian');
-                    }
+                    while (roles.length < playerCount) roles.push('Civilian');
                     gameSettings.selectedRoles = roles;
-                    showPlayerIcons(playerIconsContainer, this.numberOfPlayers, roles);
+                    showPlayerIcons(playerIconsContainer, playerCount, roles);
                 });
 
                 label.appendChild(checkbox);
@@ -75,33 +93,36 @@ class SettingsPhase extends BasePhase {
                 roleList.appendChild(label);
                 roleList.appendChild(document.createElement('br'));
             });
-            container.appendChild(roleList);
+
+            // Place roleList before playerIconsContainer
+            roleList.style.margin = '0 auto 1em auto';
+            roleList.style.textAlign = 'center';
+            roleContainer.appendChild(roleList);
+
+            const playerIconsContainer = createPlayerIconsContainer('playerIcons');
+            roleContainer.appendChild(playerIconsContainer);
 
             let roles = ['Murderer 1', 'Murderer 2'];
-            while(roles.length < playerCount) {
-                roles.push('Civilian');
-            }
+            while (roles.length < playerCount) roles.push('Civilian');
             gameSettings.selectedRoles = roles;
-            showPlayerIcons(playerIconsContainer, this.numberOfPlayers, roles);
+            showPlayerIcons(playerIconsContainer, playerCount, roles);
 
             const startAssignmentButton = document.createElement('button');
             startAssignmentButton.textContent = 'Confirm Player Count and Roles';
             startAssignmentButton.id = 'startAssignmentButton';
+            // Center the button
+            startAssignmentButton.style.display = 'block';
+            startAssignmentButton.style.margin = '2em auto 0 auto';
             startAssignmentButton.addEventListener('click', () => {
                 const selectedOptionalRoles = Array.from(roleList.querySelectorAll('input[name="roleOption"]:checked')).map(cb => cb.value);
+                wrapper.innerHTML = '';
+                const style = document.getElementById('settingsPhaseStyle');
+                if (style) style.remove();
                 const roleSelectionPhase = new RoleSelectionPhase();
-                // clear container
-                container.innerHTML = '';
-                // clear style
-                document.getElementById('settingsPhaseStyle').parentNode.removeChild(document.getElementById('settingsPhaseStyle'));
-                roleSelectionPhase.start(this.numberOfPlayers, selectedOptionalRoles);
-            })
-            container.appendChild(startAssignmentButton);
+                roleSelectionPhase.start(playerCount, selectedOptionalRoles);
+            });
+            roleContainer.appendChild(startAssignmentButton);
         });
-        container.appendChild(setPlayerCountButton);
-
-        document.body.appendChild(container);
-        this.phaseUIElements.push(container);
     }
 
     clearPrevious() {
@@ -120,9 +141,9 @@ class SettingsPhase extends BasePhase {
     }
 
     deletePlayerCounter() {
-        const container = document.getElementById('playerCounter');
-        if (container) {
-            container.parentNode.removeChild(container);
+        const wrapper = document.getElementById('settingsWrapper');
+        if (wrapper) {
+            wrapper.parentNode.removeChild(wrapper);
         }
     }
 }
